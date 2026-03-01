@@ -30,9 +30,9 @@ if st.button("Generate My Custom Game 🚀"):
     
     # 5. The Payload Delivery
     try:
-        with open("Birthday_Game.exe", "rb") as file:
+        with open("birthday_surprise.exe", "rb") as file:
             st.download_button(
-                label="🎁 Click Here to Download 'Birthday_Game.exe'",
+                label="🎁 Click Here to Download 'birthday_surprise.exe'",
                 data=file,
                 file_name="birthday_surprise.exe",
                 mime="application/octet-stream"
@@ -42,4 +42,4 @@ if st.button("Generate My Custom Game 🚀"):
         st.info("💡 **Installation Note:** Because this is a custom-generated indie game, Windows Defender might show a 'SmartScreen' warning. Just click **'More info'** and **'Run anyway'** to start your adventure!")
         
     except FileNotFoundError:
-        st.error("🚨 System Error: The game payload (`Birthday_Game.exe`) is missing from the server directory.")
+        st.error("🚨 System Error: The game payload (`birthday_surprise.exe`) is missing from the server directory.")
