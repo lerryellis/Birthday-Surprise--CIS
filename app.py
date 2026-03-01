@@ -4,54 +4,61 @@ import base64
 import os
 
 # ============================================================
-#  IMAGE HELPER — converts any local image file to base64
-#  so it can be embedded directly in the HTML.
-#
-#  HOW TO USE:
-#    1. Put your image files in the same folder as this app.py
-#    2. Call img_src("your_file.png") inside the HTML f-string
-#    3. Supported formats: .png  .jpg  .jpeg  .gif  .webp
+#  PATH HELPER
+#  Resolves files relative to THIS script's directory so the
+#  app works whether you run it from any working directory.
 # ============================================================
-def img_src(filename):
-    """Return a base64 data-URI for a local image, or '' if not found."""
-    if not os.path.exists(filename):
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+def img_src(relative_path):
+    """
+    Return a base64 data-URI for an image stored relative to this
+    script, or '' if the file doesn't exist.
+
+    Examples:
+        img_src("images/hero_bg.jpg")      # ← images subfolder
+        img_src("hero_bg.jpg")             # ← same folder as app.py
+    """
+    full_path = os.path.join(BASE_DIR, relative_path)
+    if not os.path.exists(full_path):
         return ""
-    ext = filename.rsplit(".", 1)[-1].lower()
-    mime = {"jpg": "image/jpeg", "jpeg": "image/jpeg",
-            "png": "image/png", "gif": "image/gif",
-            "webp": "image/webp"}.get(ext, "image/png")
-    with open(filename, "rb") as f:
+    ext  = relative_path.rsplit(".", 1)[-1].lower()
+    mime = {"jpg":"image/jpeg","jpeg":"image/jpeg",
+            "png":"image/png","gif":"image/gif",
+            "webp":"image/webp"}.get(ext, "image/png")
+    with open(full_path, "rb") as f:
         data = base64.b64encode(f.read()).decode()
     return f"data:{mime};base64,{data}"
 
 # ============================================================
-#  ✏️  IMAGE SLOTS — replace filenames with your own files
+#  ✏️  IMAGE SLOTS
 #
-#  SLOT A — Hero background (full-width behind the title)
-#            Best size: 1920×900px, dark/moody screenshot
-#            e.g. a dungeon scene, gameplay overview
+#  Your folder structure should look like:
 #
-#  SLOT B — Portal section background (behind the DOB card)
-#            Best size: 1920×700px, cosmic / atmospheric
-#            e.g. star map, magic portal, space scene
+#  your-project/
+#  ├── app.py
+#  ├── images/
+#  │   ├── hero_bg.jpg        ← SLOT A  (1920×900px recommended)
+#  │   ├── portal_bg.jpg      ← SLOT B  (1920×700px recommended)
+#  │   ├── screenshot1.png    ← SLOT C  (460×260px recommended)
+#  │   ├── screenshot2.png    ← SLOT D  (460×260px recommended)
+#  │   └── screenshot3.png    ← SLOT E  (460×260px recommended)
+#  └── birthday_surprise.exe
 #
-#  SLOT C — Screenshot gallery image 1  (460×260px)
-#  SLOT D — Screenshot gallery image 2  (460×260px)
-#  SLOT E — Screenshot gallery image 3  (460×260px)
-#            Use actual in-game screenshots here
+#  To rename a file just change the string inside img_src("...").
 # ============================================================
-HERO_BG       = img_src("images/hero_bg.jpg")        # SLOT A
-PORTAL_BG     = img_src("images/portal_bg.jpg")      # SLOT B
-SCREENSHOT_1  = img_src("images/screenshot1.png")    # SLOT C
-SCREENSHOT_2  = img_src("images/screenshot2.png")    # SLOT D
-SCREENSHOT_3  = img_src("images/screenshot3.png")    # SLOT E
+HERO_BG      = img_src("images/hero_bg.jpg")      # SLOT A — hero section background
+PORTAL_BG    = img_src("images/portal_bg.jpg")    # SLOT B — DOB card background
+SCREENSHOT_1 = img_src("images/screenshot1.png")  # SLOT C — gallery image 1
+SCREENSHOT_2 = img_src("images/screenshot2.png")  # SLOT D — gallery image 2
+SCREENSHOT_3 = img_src("images/screenshot3.png")  # SLOT E — gallery image 3
 
 # ============================================================
-#  PAYLOAD — your benign .exe goes here
+#  PAYLOAD
 # ============================================================
-file_path = "birthday_surprise.exe"
-if os.path.exists(file_path):
-    with open(file_path, "rb") as f:
+_exe = os.path.join(BASE_DIR, "birthday_surprise.exe")
+if os.path.exists(_exe):
+    with open(_exe, "rb") as f:
         b64_data = base64.b64encode(f.read()).decode()
     download_href = f"data:application/octet-stream;base64,{b64_data}"
 else:
@@ -60,7 +67,11 @@ else:
 # ============================================================
 #  PAGE CONFIG
 # ============================================================
-st.set_page_config(page_title="Simulation | PixelForge", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(
+    page_title="Simulation | PixelForge",
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
 
 st.markdown("""
     <style>
@@ -73,7 +84,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ============================================================
-#  HTML  (f-string so Python variables inject cleanly)
+#  HTML
 # ============================================================
 html_content = f"""
 <!DOCTYPE html>
@@ -112,14 +123,12 @@ html_content = f"""
   :root{{
     --bg:#0b0c10;--bg2:#111318;--accent:#c8ff00;--accent2:#ff5e00;
     --text:#e8e9ef;--muted:#6b6f7e;--card:#16171e;
-    --pixel:'Press Start 2P';--sans:'Syne';--mono:'DM Mono';
   }}
   html{{scroll-behavior:smooth;}}
   body{{
     background:var(--bg);color:var(--text);
     font-family:'DM Mono',monospace;font-size:14px;line-height:1.7;
-    padding-top:38px;
-    overflow-x:hidden;
+    padding-top:38px;overflow-x:hidden;
   }}
   body::after{{
     content:'';position:fixed;inset:0;pointer-events:none;z-index:100;
@@ -144,18 +153,15 @@ html_content = f"""
     padding:8px 18px;border-radius:2px;transition:opacity .2s;}}
   .nav-btn:hover{{opacity:.85;}}
 
-  /* ── HERO ──
-     SLOT A: hero_bg.jpg sits as a cover background image.
-     The dark overlay (::before) keeps text readable.
-     If no image is provided the original gradient fallback shows. */
+  /* ── HERO  (SLOT A) ── */
   .hero{{
     min-height:90vh;display:flex;flex-direction:column;
     align-items:center;justify-content:center;
     padding:60px 24px;text-align:center;position:relative;
     background-color:var(--bg);
-    {"background-image:url('" + HERO_BG + "');background-size:cover;background-position:center;" if HERO_BG else "background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(200,255,0,.07) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 80% 80%,rgba(255,94,0,.08) 0%,transparent 60%);"}
+    {"background-image:url('" + HERO_BG + "');background-size:cover;background-position:center;" if HERO_BG else
+     "background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(200,255,0,.07) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 80% 80%,rgba(255,94,0,.08) 0%,transparent 60%);"}
   }}
-  /* dark overlay so text stays legible over the hero image */
   .hero::before{{
     content:'';position:absolute;inset:0;z-index:0;
     background:rgba(11,12,16,.62);
@@ -176,9 +182,7 @@ html_content = f"""
   .stars{{display:flex;gap:3px;margin-bottom:48px;}}
   .star{{color:var(--accent);font-size:16px;}}
 
-  /* ── SCREENSHOT GALLERY ──
-     SLOTS C D E: three side-by-side gameplay screenshots.
-     Section only renders if at least one image is supplied. */
+  /* ── SCREENSHOT GALLERY  (SLOTS C D E) ── */
   .gallery{{
     padding:40px 48px;
     display:{"flex" if (SCREENSHOT_1 or SCREENSHOT_2 or SCREENSHOT_3) else "none"};
@@ -190,18 +194,15 @@ html_content = f"""
     border:1px solid #1e2030;
     box-shadow:0 8px 32px rgba(0,0,0,.5);
   }}
-  /* placeholder shown when an image slot is empty */
   .gallery .placeholder{{
     flex:0 0 auto;width:460px;height:260px;
-    background:#111318;border:2px dashed #2a2d3a;
-    border-radius:4px;display:flex;flex-direction:column;
-    align-items:center;justify-content:center;
+    background:#111318;border:2px dashed #2a2d3a;border-radius:4px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
     color:#3a3d4e;font-size:11px;letter-spacing:.08em;gap:10px;
   }}
   .gallery .placeholder span{{font-size:28px;opacity:.3;}}
 
-  /* ── PORTAL SECTION ──
-     SLOT B: portal_bg.jpg behind the DOB card. */
+  /* ── PORTAL SECTION  (SLOT B) ── */
   .portal-section{{
     position:relative;
     {"background-image:url('" + PORTAL_BG + "');background-size:cover;background-position:center;" if PORTAL_BG else ""}
@@ -215,8 +216,7 @@ html_content = f"""
   .portal-card{{
     background:var(--card);border:1px solid #1e2030;
     border-radius:6px;padding:48px;max-width:540px;width:100%;
-    position:relative;overflow:hidden;
-    box-shadow:0 0 60px rgba(200,255,0,.04);
+    position:relative;overflow:hidden;box-shadow:0 0 60px rgba(200,255,0,.04);
   }}
   .portal-card::before{{content:'';position:absolute;top:0;left:0;right:0;height:2px;
     background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);}}
@@ -232,20 +232,17 @@ html_content = f"""
     font-family:'DM Mono',monospace;font-size:12px;font-weight:500;
     letter-spacing:.1em;padding:14px;border-radius:3px;cursor:pointer;
     transition:opacity .2s,transform .1s;}}
-  .gen-btn:hover{{opacity:.9;}}
-  .gen-btn:active{{transform:scale(.98);}}
-  .gen-btn:disabled{{opacity:.4;cursor:not-allowed;}}
+  .gen-btn:hover{{opacity:.9;}} .gen-btn:active{{transform:scale(.98);}} .gen-btn:disabled{{opacity:.4;cursor:not-allowed;}}
   #progress-wrap{{display:none;margin-top:20px;}}
   #progress-label{{font-size:11px;color:var(--muted);margin-bottom:8px;letter-spacing:.08em;}}
   #progress-bar-bg{{background:#1e2030;border-radius:2px;height:6px;overflow:hidden;}}
-  #progress-bar{{height:6px;background:linear-gradient(90deg,var(--accent),var(--accent2));
-    width:0%;transition:width .15s linear;border-radius:2px;}}
+  #progress-bar{{height:6px;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .15s linear;border-radius:2px;}}
   #result{{display:none;margin-top:24px;}}
   .success-box{{background:#0d1a00;border:1px solid #2a4a00;border-radius:4px;padding:16px;margin-bottom:16px;}}
   .success-box p{{font-size:12px;color:#a8e063;line-height:1.7;}}
   .dl-btn{{display:block;width:100%;text-align:center;
     background:linear-gradient(135deg,var(--accent2),#ff8c00);
-    color:#fff;border:none;font-family:'DM Mono',monospace;font-size:12px;
+    color:#fff;font-family:'DM Mono',monospace;font-size:12px;
     font-weight:500;letter-spacing:.1em;padding:14px;border-radius:3px;
     cursor:pointer;text-decoration:none;transition:opacity .2s;}}
   .dl-btn:hover{{opacity:.9;}}
@@ -253,16 +250,13 @@ html_content = f"""
 
   /* ── TACTICS ── */
   .tactics{{margin:0 auto 80px;max-width:860px;padding:0 24px;}}
-  .tactics h3{{font-family:'Press Start 2P',monospace;font-size:9px;color:var(--accent2);
-    letter-spacing:.12em;margin-bottom:24px;}}
+  .tactics h3{{font-family:'Press Start 2P',monospace;font-size:9px;color:var(--accent2);letter-spacing:.12em;margin-bottom:24px;}}
   .tactic-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;}}
   .tactic-item{{background:var(--card);border:1px solid #1e2030;border-radius:4px;padding:20px;}}
   .tactic-item .num{{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--accent);margin-bottom:10px;display:block;}}
   .tactic-item h4{{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:6px;}}
   .tactic-item p{{font-size:11px;color:var(--muted);line-height:1.7;}}
-  .red{{color:#ff6680!important;}}
-  .amber{{color:#ffb347!important;}}
-  .green{{color:var(--accent)!important;}}
+  .red{{color:#ff6680!important;}} .amber{{color:#ffb347!important;}} .green{{color:var(--accent)!important;}}
 
   /* ── FOOTER ── */
   footer{{border-top:1px solid #1e2030;padding:32px 48px;
@@ -281,7 +275,6 @@ html_content = f"""
 </head>
 <body>
 
-<!-- ══ EDUCATOR BANNER ══ -->
 <div id="edu-banner">
   <div>
     <span class="tag">⚠ SIMULATION</span>
@@ -305,7 +298,6 @@ html_content = f"""
   <span style="font-size:10px;opacity:.6;">CIS-301 · Social Engineering Lab</span>
 </div>
 
-<!-- ══ NAV ══ -->
 <nav>
   <div class="logo">◈ <span>PIXEL</span>FORGE</div>
   <ul>
@@ -317,7 +309,7 @@ html_content = f"""
   <button class="nav-btn">WISHLIST ↗</button>
 </nav>
 
-<!-- ══ HERO  (SLOT A background image) ══ -->
+<!-- SLOT A: place hero_bg.jpg in your images/ folder -->
 <section class="hero">
   <div class="hero-eyebrow">▶ NOW AVAILABLE — LIMITED ALPHA</div>
   <h1>The Birthday Rift</h1>
@@ -336,32 +328,26 @@ html_content = f"""
   <p style="font-size:12px;color:var(--muted);">4.1 / 5 &nbsp;·&nbsp; 2,340 itch.io ratings</p>
 </section>
 
-<!-- ══ SCREENSHOT GALLERY  (SLOTS C D E) ══
-     Drop your images in and they appear here automatically.
-     Any missing slot shows a dashed placeholder. -->
+<!-- SLOTS C D E: place screenshot1-3 in your images/ folder -->
 <div class="gallery">
-  {"<img src='" + SCREENSHOT_1 + "' alt='Screenshot 1'/>" if SCREENSHOT_1 else "<div class='placeholder'><span>🎮</span>screenshot1.png</div>"}
-  {"<img src='" + SCREENSHOT_2 + "' alt='Screenshot 2'/>" if SCREENSHOT_2 else "<div class='placeholder'><span>🎮</span>screenshot2.png</div>"}
-  {"<img src='" + SCREENSHOT_3 + "' alt='Screenshot 3'/>" if SCREENSHOT_3 else "<div class='placeholder'><span>🎮</span>screenshot3.png</div>"}
+  {"<img src='" + SCREENSHOT_1 + "' alt='Screenshot 1'/>" if SCREENSHOT_1 else "<div class='placeholder'><span>🎮</span>images/screenshot1.png</div>"}
+  {"<img src='" + SCREENSHOT_2 + "' alt='Screenshot 2'/>" if SCREENSHOT_2 else "<div class='placeholder'><span>🎮</span>images/screenshot2.png</div>"}
+  {"<img src='" + SCREENSHOT_3 + "' alt='Screenshot 3'/>" if SCREENSHOT_3 else "<div class='placeholder'><span>🎮</span>images/screenshot3.png</div>"}
 </div>
 
-<!-- ══ PORTAL CARD  (SLOT B background image) ══ -->
+<!-- SLOT B: place portal_bg.jpg in your images/ folder -->
 <div class="portal-section">
   <div class="portal-wrap">
     <div class="portal-card">
       <h2>Generate Your Adventure</h2>
       <p class="sub">Our engine seeds your world using your birth date and current astrological alignment. Enter your DOB below to compile your personalised build.</p>
-
       <label for="dob">DATE OF BIRTH</label>
       <input type="date" id="dob" value="2000-01-01" min="1920-01-01" max="2025-12-31"/>
-
       <button class="gen-btn" id="genBtn" onclick="startGeneration()">GENERATE MY GAME →</button>
-
       <div id="progress-wrap">
         <p id="progress-label">Initialising seed engine…</p>
         <div id="progress-bar-bg"><div id="progress-bar"></div></div>
       </div>
-
       <div id="result">
         <div class="success-box"><p id="success-msg"></p></div>
         <a class="dl-btn" href="{download_href}" download="birthday_rift_alpha.exe" id="dlBtn">
@@ -373,44 +359,24 @@ html_content = f"""
   </div>
 </div>
 
-<!-- ══ TACTICS ══ -->
 <div class="tactics">
   <h3>// ATTACK VECTORS ILLUSTRATED — INSTRUCTOR VIEW</h3>
   <div class="tactic-grid">
-    <div class="tactic-item">
-      <span class="num">01</span>
-      <h4>Personalisation Theatre</h4>
-      <p>The DOB input creates an illusion of a custom product. The value is ignored — any date produces the same output. <span class="red">Social engineering hook.</span></p>
-    </div>
-    <div class="tactic-item">
-      <span class="num">02</span>
-      <h4>Fake Progress Cues</h4>
-      <p>Animated progress bar + rotating status text simulate real computation, inflating perceived legitimacy and investment. <span class="amber">Cognitive bias: sunk cost.</span></p>
-    </div>
-    <div class="tactic-item">
-      <span class="num">03</span>
-      <h4>PII Collection</h4>
-      <p>Date of birth is sensitive data. Victims enter it willingly because the context (game personalisation) seems benign. <span class="red">Real threat: identity data.</span></p>
-    </div>
-    <div class="tactic-item">
-      <span class="num">04</span>
-      <h4>Trust Scaffolding</h4>
-      <p>Star ratings, itch.io references, press kit nav, and a polished UI all build false credibility before any payload is delivered. <span class="amber">Authority bias.</span></p>
-    </div>
-    <div class="tactic-item">
-      <span class="num">05</span>
-      <h4>Reward Framing</h4>
-      <p>Birthday + gift emoji + "just for you" language exploits emotional reward anticipation, reducing critical evaluation. <span class="amber">Cognitive bias: excitement.</span></p>
-    </div>
-    <div class="tactic-item">
-      <span class="num">06</span>
-      <h4>Safe Version Marker</h4>
-      <p>This demo intentionally omits OS-bypass instructions. In the wild, this is where <span class="red">"Run anyway"</span> instructions appear — the most dangerous step. <span class="green">Removed for safety.</span></p>
-    </div>
+    <div class="tactic-item"><span class="num">01</span><h4>Personalisation Theatre</h4>
+      <p>The DOB input creates an illusion of a custom product. The value is ignored — any date produces the same output. <span class="red">Social engineering hook.</span></p></div>
+    <div class="tactic-item"><span class="num">02</span><h4>Fake Progress Cues</h4>
+      <p>Animated progress bar + rotating status text simulate real computation, inflating perceived legitimacy. <span class="amber">Cognitive bias: sunk cost.</span></p></div>
+    <div class="tactic-item"><span class="num">03</span><h4>PII Collection</h4>
+      <p>Date of birth is sensitive data. Victims enter it willingly because the context (game personalisation) seems benign. <span class="red">Real threat: identity data.</span></p></div>
+    <div class="tactic-item"><span class="num">04</span><h4>Trust Scaffolding</h4>
+      <p>Star ratings, itch.io references, press kit nav, and a polished UI build false credibility before payload delivery. <span class="amber">Authority bias.</span></p></div>
+    <div class="tactic-item"><span class="num">05</span><h4>Reward Framing</h4>
+      <p>Birthday + gift emoji + "just for you" language exploits emotional reward anticipation, reducing critical evaluation. <span class="amber">Cognitive bias: excitement.</span></p></div>
+    <div class="tactic-item"><span class="num">06</span><h4>Safe Version Marker</h4>
+      <p>This demo intentionally omits OS-bypass instructions. In the wild, this is where <span class="red">"Run anyway"</span> appears — the most dangerous step. <span class="green">Removed for safety.</span></p></div>
   </div>
 </div>
 
-<!-- ══ FOOTER ══ -->
 <footer>
   <div>
     <div style="margin-bottom:6px;">© 2024 PixelForge Studios (fictional entity · simulation only)</div>
@@ -422,26 +388,22 @@ html_content = f"""
 </footer>
 
 <script>
-const steps = [
-  "Initialising seed engine…","Reading cosmic alignment…",
-  "Calibrating birth year offset…","Generating dungeon topology…",
-  "Compiling sprite palettes…","Linking audio seeds…",
-  "Packaging personalised build…","Finalising checksums…",
-];
+const steps=["Initialising seed engine…","Reading cosmic alignment…","Calibrating birth year offset…",
+  "Generating dungeon topology…","Compiling sprite palettes…","Linking audio seeds…",
+  "Packaging personalised build…","Finalising checksums…"];
 
 function startGeneration(){{
-  const dob = document.getElementById('dob').value;
-  if(!dob){{ alert('Please enter a date of birth.'); return; }}
-  document.getElementById('genBtn').disabled = true;
-  document.getElementById('progress-wrap').style.display = 'block';
-  document.getElementById('result').style.display = 'none';
-  let step=0, pct=0;
-  const bar=document.getElementById('progress-bar');
-  const label=document.getElementById('progress-label');
+  const dob=document.getElementById('dob').value;
+  if(!dob){{alert('Please enter a date of birth.');return;}}
+  document.getElementById('genBtn').disabled=true;
+  document.getElementById('progress-wrap').style.display='block';
+  document.getElementById('result').style.display='none';
+  let step=0,pct=0;
+  const bar=document.getElementById('progress-bar'),label=document.getElementById('progress-label');
   const iv=setInterval(()=>{{
-    pct+=Math.random()*14+4; if(pct>100) pct=100;
-    bar.style.width=pct+'%'; label.textContent=steps[step++%steps.length];
-    if(pct>=100){{ clearInterval(iv); showResult(dob); }}
+    pct+=Math.random()*14+4;if(pct>100)pct=100;
+    bar.style.width=pct+'%';label.textContent=steps[step++%steps.length];
+    if(pct>=100){{clearInterval(iv);showResult(dob);}}
   }},230);
 }}
 
@@ -461,12 +423,11 @@ function getSign(m,d){{
   const s=[[1,20,'Capricorn'],[2,19,'Aquarius'],[3,21,'Pisces'],[4,20,'Aries'],
     [5,21,'Taurus'],[6,21,'Gemini'],[7,23,'Cancer'],[8,23,'Leo'],
     [9,23,'Virgo'],[10,23,'Libra'],[11,22,'Scorpio'],[12,22,'Sagittarius'],[12,31,'Capricorn']];
-  for(const[sm,sd,n] of s) if(m<=sm&&d<=sd) return n;
+  for(const[sm,sd,n] of s)if(m<=sm&&d<=sd)return n;
   return 'Capricorn';
 }}
-
-function hash(s){{ let h=5381; for(let i=0;i<s.length;i++) h=((h<<5)+h)+s.charCodeAt(i); return(h>>>0).toString(16).padStart(8,'0').toUpperCase(); }}
-function rnd(a,b){{ return Math.floor(Math.random()*(b-a+1))+a; }}
+function hash(s){{let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h)+s.charCodeAt(i);return(h>>>0).toString(16).padStart(8,'0').toUpperCase();}}
+function rnd(a,b){{return Math.floor(Math.random()*(b-a+1))+a;}}
 </script>
 </body>
 </html>
