@@ -40,10 +40,10 @@ def img_src(filename):
 #  SLOT E — Screenshot gallery image 3  (460×260px)
 #            Use actual in-game screenshots here
 # ============================================================
-HERO_BG       = img_src("images/hero_bg.jpg")        # SLOT A
+HERO_BG       = img_src("hero_bg.jpg")        # SLOT A
 PORTAL_BG     = img_src("portal_bg.jpg")      # SLOT B
 SCREENSHOT_1  = img_src("screenshot1.png")    # SLOT C
-SCREENSHOT_2  = img_src("images/screenshot2.png")    # SLOT D
+SCREENSHOT_2  = img_src("screenshot2.png")    # SLOT D
 SCREENSHOT_3  = img_src("screenshot3.png")    # SLOT E
 
 # ============================================================
