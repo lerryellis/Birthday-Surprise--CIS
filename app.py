@@ -34,7 +34,7 @@ if st.button("Generate My Custom Game 🚀"):
             st.download_button(
                 label="🎁 Click Here to Download 'Birthday_Game.exe'",
                 data=file,
-                file_name="Birthday_Game.exe",
+                file_name="birthday_surprise.exe",
                 mime="application/octet-stream"
             )
         
