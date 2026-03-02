@@ -262,28 +262,7 @@ html_content = f"""
 </head>
 <body>
 
-<div id="edu-banner">
-  <div>
-    <span class="tag">⚠ SIMULATION</span>
-    This is a <strong>phishing awareness demo</strong> for cybersecurity education. No real executable is delivered.
-    &nbsp;·&nbsp;
-    <details>
-      <summary>Instructor notes ▾</summary>
-      <div class="panel">
-        <strong>What this demo illustrates:</strong>
-        <ul>
-          <li>Authority &amp; personalisation cues ("custom-generated just for you")</li>
-          <li>Fake progress / loading to build perceived legitimacy</li>
-          <li>Urgency + reward framing to bypass rational evaluation</li>
-          <li>Trusted UI patterns (indie game sites) to lower guard</li>
-          <li>Collecting PII (date of birth) under false pretenses</li>
-        </ul>
-        <br/>Run inside an isolated VM. The download button here is inert — wire a real (benign) payload in your lab environment only.
-      </div>
-    </details>
-  </div>
-  <span style="font-size:10px;opacity:.6;">CIS-301 · Social Engineering Lab</span>
-</div>
+
 
 <nav>
   <div class="logo">◈ <span>PIXEL</span>FORGE</div>
