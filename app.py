@@ -102,8 +102,8 @@ html_content = f"""
     --text:#e8e9ef;--muted:#6b6f7e;--card:#16171e;
     
     /* 👇 CHANGE THESE TWO VARIABLES TO ADJUST IMAGE DIMENSIONS 👇 */
-    --hero-height: 90vh;       /* e.g., change to 800px */
-    --portal-height: 100%;     /* e.g., change to 700px */
+    --hero-height: 800px;       /* e.g., change to 800px */
+    --portal-height: 800px;     /* e.g., change to 700px */
   }}
 
   html{{scroll-behavior:smooth;}}
