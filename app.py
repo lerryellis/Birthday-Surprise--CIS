@@ -5,20 +5,10 @@ import os
 
 # ============================================================
 #  PATH HELPER
-#  Resolves files relative to THIS script's directory so the
-#  app works whether you run it from any working directory.
 # ============================================================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def img_src(relative_path):
-    """
-    Return a base64 data-URI for an image stored relative to this
-    script, or '' if the file doesn't exist.
-
-    Examples:
-        img_src("images/hero_bg.jpg")      # ← images subfolder
-        img_src("hero_bg.jpg")             # ← same folder as app.py
-    """
     full_path = os.path.join(BASE_DIR, relative_path)
     if not os.path.exists(full_path):
         return ""
@@ -32,27 +22,12 @@ def img_src(relative_path):
 
 # ============================================================
 #  ✏️  IMAGE SLOTS
-#
-#  Your folder structure should look like:
-#
-#  your-project/
-#  ├── app.py
-#  ├── images/
-#  │   ├── hero_bg.jpg        ← SLOT A  (1920×900px recommended)
-#  │   ├── portal_bg.jpg      ← SLOT B  (1920×700px recommended)
-#  │   ├── screenshot1.png    ← SLOT C  (460×260px recommended)
-#  │   ├── screenshot2.png    ← SLOT D  (460×260px recommended)
-#  │   └── screenshot3.png    ← SLOT E  (460×260px recommended)
-#  └── birthday_surprise.exe
-#
-#  To rename a file just change the string inside img_src("...").
 # ============================================================
-HERO_BG      = img_src("images/hero_bg.png")      # SLOT A — hero section background
-PORTAL_BG    = img_src("images/portal_bg.png")    # SLOT B — DOB card background
-SCREENSHOT_1 = img_src("images/screenshot1.png")  # SLOT C — gallery image 1
-SCREENSHOT_2 = img_src("images/screenshot2.png")  # SLOT D — gallery image 2
-SCREENSHOT_3 = img_src("images/screenshot3.png")  # SLOT E — gallery image 3
-
+HERO_BG      = img_src("images/hero_bg.png")      # SLOT A
+PORTAL_BG    = img_src("images/portal_bg.png")    # SLOT B
+SCREENSHOT_1 = img_src("images/screenshot1.png")  # SLOT C
+SCREENSHOT_2 = img_src("images/screenshot2.png")  # SLOT D
+SCREENSHOT_3 = img_src("images/screenshot3.png")  # SLOT E
 
 # ============================================================
 #  PAYLOAD
@@ -121,10 +96,16 @@ html_content = f"""
 
   /* ── RESET & BASE ── */
   *,*::before,*::after{{box-sizing:border-box;margin:0;padding:0;}}
+  
   :root{{
     --bg:#0b0c10;--bg2:#111318;--accent:#c8ff00;--accent2:#ff5e00;
     --text:#e8e9ef;--muted:#6b6f7e;--card:#16171e;
+    
+    /* 👇 CHANGE THESE TWO VARIABLES TO ADJUST IMAGE DIMENSIONS 👇 */
+    --hero-height: 90vh;       /* e.g., change to 800px */
+    --portal-height: 100%;     /* e.g., change to 700px */
   }}
+
   html{{scroll-behavior:smooth;}}
   body{{
     background:var(--bg);color:var(--text);
@@ -156,7 +137,8 @@ html_content = f"""
 
   /* ── HERO  (SLOT A) ── */
   .hero{{
-    min-height:90vh;display:flex;flex-direction:column;
+    min-height: var(--hero-height); /* Applied here */
+    display:flex;flex-direction:column;
     align-items:center;justify-content:center;
     padding:60px 24px;text-align:center;position:relative;
     background-color:var(--bg);
@@ -206,6 +188,10 @@ html_content = f"""
   /* ── PORTAL SECTION  (SLOT B) ── */
   .portal-section{{
     position:relative;
+    min-height: var(--portal-height); /* Applied here */
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
     {"background-image:url('" + PORTAL_BG + "');background-size:cover;background-position:center;" if PORTAL_BG else ""}
   }}
   .portal-section::before{{
@@ -213,7 +199,7 @@ html_content = f"""
     background:rgba(11,12,16,.72);
     {"display:block;" if PORTAL_BG else "display:none;"}
   }}
-  .portal-wrap{{padding:60px 24px;display:flex;justify-content:center;position:relative;z-index:1;}}
+  .portal-wrap{{padding:60px 24px;display:flex;justify-content:center;position:relative;z-index:1;width:100%;}}
   .portal-card{{
     background:var(--card);border:1px solid #1e2030;
     border-radius:6px;padding:48px;max-width:540px;width:100%;
@@ -310,7 +296,6 @@ html_content = f"""
   <button class="nav-btn">WISHLIST ↗</button>
 </nav>
 
-<!-- SLOT A: place hero_bg.jpg in your images/ folder -->
 <section class="hero">
   <div class="hero-eyebrow">▶ NOW AVAILABLE — LIMITED ALPHA</div>
   <h1>The Birthday Rift</h1>
@@ -329,14 +314,12 @@ html_content = f"""
   <p style="font-size:12px;color:var(--muted);">4.1 / 5 &nbsp;·&nbsp; 2,340 itch.io ratings</p>
 </section>
 
-<!-- SLOTS C D E: place screenshot1-3 in your images/ folder -->
 <div class="gallery">
   {"<img src='" + SCREENSHOT_1 + "' alt='Screenshot 1'/>" if SCREENSHOT_1 else "<div class='placeholder'><span>🎮</span>images/screenshot1.png</div>"}
   {"<img src='" + SCREENSHOT_2 + "' alt='Screenshot 2'/>" if SCREENSHOT_2 else "<div class='placeholder'><span>🎮</span>images/screenshot2.png</div>"}
   {"<img src='" + SCREENSHOT_3 + "' alt='Screenshot 3'/>" if SCREENSHOT_3 else "<div class='placeholder'><span>🎮</span>images/screenshot3.png</div>"}
 </div>
 
-<!-- SLOT B: place portal_bg.jpg in your images/ folder -->
 <div class="portal-section">
   <div class="portal-wrap">
     <div class="portal-card">
