@@ -374,9 +374,7 @@ html_content = f"""
 <script>
 const steps=["Initialising seed engine…","Reading cosmic alignment…","Calibrating birth year offset…",
   "Generating dungeon topology…","Compiling sprite palettes…","Linking audio seeds…",
-  "Packaging personalised build…","Finalising checksums…","# A little psychological priming for Windows Defender
-
-        st.info("💡 **Installation Note:** Because this is a custom-generated indie game, Windows Defender might show a 'SmartScreen' warning. Just click **'More info'** and **'Run anyway'** to start your adventure!")"];
+  "Packaging personalised build…","Finalising checksums…"];
 
 function startGeneration(){{
   const dob=document.getElementById('dob').value;
