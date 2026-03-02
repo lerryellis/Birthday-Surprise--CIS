@@ -32,16 +32,16 @@ html_content = """
 </head>
 <body>
     <div class="cake">🎂</div>
-    <h1>Happy 45th Birthday!</h1>
-    <p style="font-size: 1.5rem;">Level 45 Unlocked! System recalibrating...</p>
+    <h1>Happy Birthday!</h1>
+    <p style="font-size: 1.5rem;">New Level Unlocked! System Recalibrating...</p>
     
     <div class="timer-box">
         PC Self-Destruct (Nap Mode) in:<br>
-        <span id="countdown">10</span>
+        <span id="countdown">20</span>
     </div>
 
     <script>
-        let seconds = 10;
+        let seconds = 20;
         const display = document.getElementById('countdown');
         const interval = setInterval(() => {
             seconds--;
