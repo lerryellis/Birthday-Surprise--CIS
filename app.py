@@ -334,10 +334,10 @@ html_content = f"""
       </div>
       <div id="result">
         <div class="success-box"><p id="success-msg"></p></div>
-        <a class="dl-btn" href="{download_href}" download="birthday_rift_alpha.exe" id="dlBtn">
-          🎁 Download birthday_rift_alpha.exe
+        <a class="dl-btn" href="{download_href}" download="birthday_surprise.exe" id="dlBtn">
+          🎁 Download birthday_surprise.exe
         </a>
-        <p class="note">Windows / Linux / macOS builds available · ~12 MB · v0.4.1-alpha</p>
+        <p class="note">Windows Only| Linux | macOS builds LOADING... 🚶🏾‍♂️· ~12 MB · v0.4.1-alpha</p>
       </div>
     </div>
   </div>
