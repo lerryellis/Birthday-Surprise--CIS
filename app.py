@@ -53,21 +53,6 @@ SCREENSHOT_1 = img_src("images/screenshot1.png")  # SLOT C — gallery image 1
 SCREENSHOT_2 = img_src("images/screenshot2.png")  # SLOT D — gallery image 2
 SCREENSHOT_3 = img_src("images/screenshot3.png")  # SLOT E — gallery image 3
 
-st.divider()
-st.subheader("🧪 Image Debug Panel")
-
-st.write("Hero background loaded:", bool(HERO_BG))
-st.write("Portal background loaded:", bool(PORTAL_BG))
-st.write("Screenshot 1 loaded:", bool(SCREENSHOT_1))
-st.write("Screenshot 2 loaded:", bool(SCREENSHOT_2))
-st.write("Screenshot 3 loaded:", bool(SCREENSHOT_3))
-
-# Direct preview test (bypasses HTML)
-test_img = os.path.join(BASE_DIR, "images/hero_bg.jpg")
-if os.path.exists(test_img):
-    st.image(test_img, caption="Direct Streamlit Image Test")
-else:
-    st.warning("Hero image cannot be previewed directly.")
 
 # ============================================================
 #  PAYLOAD
