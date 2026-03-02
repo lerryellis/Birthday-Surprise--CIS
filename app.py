@@ -402,7 +402,7 @@ function showResult(dob){{
   document.getElementById('progress-wrap').style.display='none';
   document.getElementById('result').style.display='block';
   
-  function showResult(dob){{
+  function showResult(dob)
   const d=new Date(dob);
   const fmt=d.toLocaleDateString('en-GB',{{day:'numeric',month:'long',year:'numeric'}});
   const sign=getSign(d.getMonth()+1,d.getDate());
