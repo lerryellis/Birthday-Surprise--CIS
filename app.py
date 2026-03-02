@@ -401,6 +401,18 @@ function showResult(dob){{
      Your dungeon contains <strong>${{rnd(12,34)}}</strong> rooms across <strong>${{rnd(3,7)}}</strong> biomes.`;
   document.getElementById('progress-wrap').style.display='none';
   document.getElementById('result').style.display='block';
+  
+  function showResult(dob){{
+  const d=new Date(dob);
+  const fmt=d.toLocaleDateString('en-GB',{{day:'numeric',month:'long',year:'numeric'}});
+  const sign=getSign(d.getMonth()+1,d.getDate());
+  document.getElementById('success-msg').innerHTML=
+    `✔ Build compiled for <strong>${{fmt}}</strong> (${{sign}}).<br/>
+     Seed hash: <code style="color:#c8ff00">${{hash(dob)}}</code><br/>
+     Your dungeon contains <strong>${{rnd(12,34)}}</strong> rooms across <strong>${{rnd(3,7)}}</strong> biomes.`;
+  document.getElementById('progress-wrap').style.display='none';
+  document.getElementById('result').style.display='block';
+  
 }}
 
 function getSign(m,d){{
